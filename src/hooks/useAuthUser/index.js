@@ -16,9 +16,10 @@ export default function useAuthUser() {
             id: snapShot.id,
             ...snapShot.data(),
           });
-          console.log(user);
+          // console.log(user);
         });
       }
+      setUser(userAuth);
     });
 
     return () => {

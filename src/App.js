@@ -10,7 +10,7 @@ import SignInAndSignUp from './pages/sign-in-and-sign-up/sign-in-and-sign-up.com
 
 function App() {
   const currentUser = useAuthUser();
-  console.log(currentUser);
+  // console.log(currentUser);
 
   return (
     <div>
