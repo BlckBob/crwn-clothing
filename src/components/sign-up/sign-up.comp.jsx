@@ -90,13 +90,7 @@ const SignUp = () => {
           label='Confirm Password'
           required
         />
-        <div className='buttons'>
-          <CustomButton type='submit'>SIGN UP</CustomButton>
-          {/* <CustomButton onClick={signInWithGoogle} isGoogleSignIn>
-            {' '}
-            Sign in with Google{' '}
-          </CustomButton> */}
-        </div>
+        <CustomButton type='submit'>SIGN UP</CustomButton>
       </form>
     </div>
   );

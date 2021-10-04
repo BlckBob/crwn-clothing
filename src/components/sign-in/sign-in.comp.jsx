@@ -50,7 +50,7 @@ const SignIn = () => {
           name='email'
           value={state.email}
           handleChange={handleChange}
-          label='email'
+          label='Email'
           required
         />
         <FormInput
@@ -58,7 +58,7 @@ const SignIn = () => {
           name='password'
           value={state.password}
           handleChange={handleChange}
-          label='password'
+          label='Password'
           required
         />
         <div className='buttons'>

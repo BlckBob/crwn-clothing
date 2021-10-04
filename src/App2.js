@@ -1,21 +1,44 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 
 import './App.css';
 
 import Header from './components/header/header.comp';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import HomePage from './pages/homepage/homepage.comp';
 import ShopPage from './pages/shop/shop.comp';
 import SignInAndSignUp from './pages/sign-in-and-sign-up/sign-in-and-sign-up.comp';
-import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { setCurrentUser } from './redux/user/user.actions';
 
 function App() {
-  const currentUser = useAuthUser();
+  // let unsubscribeFromAuth = null;
+  // const currentUser = useAuthUser();
   // console.log(currentUser);
+
+  useEffect(() => {
+    // const { setCurrentUser } = props;
+    const unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
+      if (userAuth) {
+        const userRef = await createUserProfileDocument(userAuth);
+
+        userRef.onSnapshot((snapShot) => {
+          setCurrentUser({
+            id: snapShot.id,
+            ...snapShot.data(),
+          });
+        });
+      }
+      setCurrentUser(userAuth);
+    });
+    return () => {
+      unsubscribeFromAuth();
+    };
+  }, []);
 
   return (
     <div>
-      <Header currentUser={currentUser} />
+      <Header /* currentUser={currentUser} */ />
       <Switch>
         <Route exact path='/' component={HomePage} />
         <Route path='/shop' component={ShopPage} />
@@ -25,33 +48,12 @@ function App() {
   );
 }
 
-export default App;
+// const mapStateToProps = ({ user }) => ({
+//   currentUser: user.currentUser,
+// });
 
-function useAuthUser() {
-  const [user, setUser] = useState(null);
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
 
-  useEffect(() => {
-    // no need for ref here
-    const unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
-      // setUser(userAuth);
-      if (userAuth) {
-        const userRef = await createUserProfileDocument(userAuth);
-
-        userRef.onSnapshot((snapShot) => {
-          setUser({
-            id: snapShot.id,
-            ...snapShot.data(),
-          });
-          console.log(user);
-        });
-      }
-    });
-
-    return () => {
-      unsubscribeFromAuth();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return user; // return authenticated user
-}
+export default connect(null, mapDispatchToProps)(App);
